@@ -1,23 +1,32 @@
 require("dotenv").config();
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { promisify } = require("util");
 const redis = require("redis");
 
+const getRedisAsyncCommands = require("./redisCommands");
+const { authRoutes: setupAuthRoutes } = require("./routes/auth");
+const setupActionRoutes = require("./routes/action");
+
 const client = redis.createClient();
-const getAsync = promisify(client.get).bind(client);
+const redisAsyncCommands = getRedisAsyncCommands(client);
 
 const port = process.env.PORT || 5000;
 
 client.on("error", () => console.log(error));
 
 const app = express();
+app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 
-app.get("/", async (req, res) => {
-  const fooValue = await getAsync("foo");
-  res.json({ message: fooValue });
+setupAuthRoutes(app, redisAsyncCommands);
+setupActionRoutes(app, redisAsyncCommands);
+
+app.use((err, _req, res, _next) => {
+  if (res.statusCode === 200) res.status(500);
+  res.send(err.message);
 });
 
 app.listen(port, () => {
