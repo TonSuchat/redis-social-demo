@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
-import { getUserName } from "../../auth";
+import { getUserData } from "../../auth";
 
 type AddPostType = {
   onAddPost: (data: Record<string, any>) => void;
@@ -21,7 +21,9 @@ const AddPost: React.FC<AddPostType> = ({ onAddPost }) => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="field">
-          <label className="label">{getUserName()}, What are you doing?</label>
+          <label className="label">
+            {getUserData()?.userName}, What are you doing?
+          </label>
           <div className="control">
             <textarea
               name="content"

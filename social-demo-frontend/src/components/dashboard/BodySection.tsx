@@ -1,7 +1,6 @@
 import React from "react";
 import AddPost from "./AddPost";
 import FollowerOrFollowing from "../FollowerOrFollowing";
-import PostItem from "../PostItem";
 
 type BodySectionType = {
   onAddPost: (data: Record<string, any>) => void;
@@ -19,11 +18,6 @@ const BodySection: React.FC<BodySectionType> = ({ onAddPost }) => {
           <FollowerOrFollowing type="following" />
         </div>
       </div>
-      <PostItem
-        username="ton"
-        content="Hello World!"
-        postedDateTime="1 days ago"
-      />
     </div>
   );
 };

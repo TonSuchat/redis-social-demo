@@ -8,10 +8,10 @@ export const checkIsAuthen = (): boolean => {
   return true;
 };
 
-export const getUserName = (): string => {
+export const getUserData = (): { userName: string; userId: number } | null => {
   const value = localStorage.getItem("userData");
-  if (!value) return "";
-  return JSON.parse(value).userName;
+  if (!value) return null;
+  return JSON.parse(value);
 };
 
 export const logout = () => {

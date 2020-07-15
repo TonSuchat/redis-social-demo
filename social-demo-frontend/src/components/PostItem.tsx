@@ -1,19 +1,24 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-type PostItemType = {
+export type PostItemType = {
+  userId: number;
+  postId: number;
   username: string;
   content: string;
   postedDateTime: string;
 };
 
 const PostItem: React.FC<PostItemType> = (
-  { username, content, postedDateTime },
+  { userId, username, content, postedDateTime },
 ) => {
   return (
     <>
       <div className="tile is-parent is-vertical">
         <article className="tile is-child notification is-light">
-          <p className="title">{username}</p>
+          <p className="title">
+            <Link to={`/profile/${userId}`}>{username}</Link>
+          </p>
           <p className="subtitle">{content}</p>
           <span>{postedDateTime}</span>
         </article>

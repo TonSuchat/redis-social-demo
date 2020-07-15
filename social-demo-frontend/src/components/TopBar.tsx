@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { getUserName } from "../auth";
+import { getUserData } from "../auth";
 
 type TopBarType = {
   onLogout: () => void;
@@ -15,10 +15,11 @@ const TopBar: React.FC<TopBarType> = ({ onLogout }) => {
         <Link className="level-item" to="/timeline">
           Timeline
         </Link>
+        {/* eslint-disable-next-line */}
         <a onClick={onLogout} className="level-item" href="#">
           Logout
         </a>
-        <span>Hello {getUserName()}</span>
+        <span>Hello {getUserData()?.userName}</span>
       </div>
     </nav>
   );

@@ -1,29 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useFetch from "use-http";
 
-import { logout } from "../../auth";
-import TopBar from "../TopBar";
 import BodySection from "./BodySection";
+import PostList from "../PostList";
+import { PostItemType } from "../PostItem";
 
-const Index: React.FC = (props: any) => {
+const Index: React.FC = () => {
+  const [posts, setPosts] = useState<PostItemType[]>([]);
   const { get, post, response } = useFetch();
 
-  const onLogout = async () => {
-    await get("/logout");
-    if (response.ok) {
-      logout();
-      props.history.push("/login");
-    }
-  };
+  useEffect(() => {
+    // get posts
+    const getPosts = async () => {
+      const resPosts = await get("/post");
+      if (response.ok) {
+        setPosts(resPosts);
+      }
+    };
+    getPosts();
+    // eslint-disable-next-line
+  }, []);
 
   const onAddPost = async (data: Record<string, any>) => {
-    await post("/post", data);
+    const newPost: PostItemType = await post("/post", data);
+    if (response.ok) {
+      setPosts([{ ...newPost }, ...posts]);
+    }
   };
 
   return (
     <div className="container">
-      <TopBar onLogout={onLogout} />
       <BodySection onAddPost={onAddPost} />
+      <PostList posts={posts} />
     </div>
   );
 };

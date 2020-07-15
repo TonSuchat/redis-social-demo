@@ -16,7 +16,7 @@ const authRoutes = (app, { hgetAsync, hsetAsync, hmsetAsync, incrAsync }) => {
     const userName = await hgetAsync(`user:${userId}`, "username");
     // set secret in cookie
     res.cookie("secret", authSecret, { httpOnly: true });
-    res.status(200).json({ data: { userName } });
+    res.status(200).json({ data: { userName, userId } });
   });
 
   app.post("/register", async (req, res, next) => {
@@ -47,7 +47,7 @@ const authRoutes = (app, { hgetAsync, hsetAsync, hmsetAsync, incrAsync }) => {
     // add auth
     await hsetAsync("auths", authSecret, userId);
     res.cookie("secret", authSecret, { httpOnly: true });
-    res.json({ message: "register success" });
+    res.status(200).json({ data: { username, userId } });
   });
 
   app.get("/logout", (_req, res) => {

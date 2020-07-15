@@ -11,7 +11,6 @@ const Index: React.FC = (props: any) => {
 
   const onLogin = async (data: Record<string, any>) => {
     const res = await post("/login", data);
-    console.log(res);
     if (response.ok) {
       setAuthen(res.data);
       props.history.push("/dashboard");
