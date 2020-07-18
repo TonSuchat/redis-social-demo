@@ -56,6 +56,7 @@ const actionRoutes = (
     zaddAsync,
     zrankAsync,
     zremAsync,
+    zcardAsync,
   },
 ) => {
   app.post("/post", isAuthorized, async (req, res, next) => {
@@ -133,13 +134,27 @@ const actionRoutes = (
         hgetallAsync,
         hgetAsync,
       );
-      const username = await hgetAsync(`user:${userId}`, "username");
+      const username = await hgetAsync(`user:${profileUserId}`, "username");
       // check user is already following this user profile
       const rank = await zrankAsync(`followings:${userId}`, profileUserId);
       const isFollowing = (rank !== null && rank !== undefined && +rank >= 0)
         ? true
         : false;
-      res.json({ username, isFollowing, posts });
+
+      res.json(
+        { username, isFollowing, posts },
+      );
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  app.get("/followCount", isAuthorized, async (req, res, next) => {
+    try {
+      const userId = await getUserIdBySecret(req, hgetAsync);
+      const followings = await zcardAsync(`followings:${userId}`);
+      const followers = await zcardAsync(`followers:${userId}`);
+      res.json({ followers, followings });
     } catch (error) {
       return next(error);
     }

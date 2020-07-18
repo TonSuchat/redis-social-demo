@@ -1,16 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import Profile from "./Profile";
 import { getUserData } from "../../auth";
-import { useFetch } from "../../helpers";
+import { PostItemType } from "../PostItem";
 
 const Index: React.FC = (props: any) => {
   const { params: {id: userId} } = props.match;
+  const [data, setData] = useState<{
+    loading: boolean;
+    isFollowing?: boolean;
+    username?: string;
+    posts?: PostItemType[];
+  }>({ loading: true });
 
-  const [data, loading, error] = useFetch(
-    `/profile/${userId}`,
-    { method: "GET" },
-  );
+  useEffect(() => {
+    const getProfile = async () => {
+      const res = await fetch(`profile/${userId}`, { method: "GET" });
+      const json = await res.json();
+      setData({ loading: false, ...json });
+    };
+    getProfile();
+  }, [userId]);
 
   const isShowButton = () => {
     if (
@@ -22,7 +32,7 @@ const Index: React.FC = (props: any) => {
   };
 
   const onFollowOrUnFollowClick = async () => {
-    if (data.isFollowing) {
+    if (data?.isFollowing) {
       // unfollow
       const response = await fetch(`/unfollow/${userId}`, { method: "DELETE" });
       if (response.ok) {
@@ -46,18 +56,14 @@ const Index: React.FC = (props: any) => {
     }
   };
 
-  if (loading) {
+  if (data.loading) {
     return <div>Loading....</div>;
-  }
-
-  if (error) {
-    return <div>{error.message}</div>;
   }
 
   return (
     <Profile
-      username={data.username}
-      posts={data.posts}
+      username={data.username ? data.username : ""}
+      posts={data.posts ? data.posts : []}
       isShowButton={isShowButton()}
       isFollowing={data.isFollowing}
       onFollowClick={onFollowOrUnFollowClick}

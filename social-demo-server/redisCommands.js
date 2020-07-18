@@ -15,6 +15,7 @@ const initialRedisAsyncCommands = (client) => {
     zaddAsync: promisify(client.zadd).bind(client),
     zrankAsync: promisify(client.zrank).bind(client),
     zremAsync: promisify(client.zrem).bind(client),
+    zcardAsync: promisify(client.zcard).bind(client),
   };
 };
 

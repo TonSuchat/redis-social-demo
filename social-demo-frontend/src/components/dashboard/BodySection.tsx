@@ -4,9 +4,12 @@ import FollowerOrFollowing from "../FollowerOrFollowing";
 
 type BodySectionType = {
   onAddPost: (data: Record<string, any>) => void;
+  followersCount: { followers: number; followings: number };
 };
 
-const BodySection: React.FC<BodySectionType> = ({ onAddPost }) => {
+const BodySection: React.FC<BodySectionType> = (
+  { onAddPost, followersCount },
+) => {
   return (
     <div className="container">
       <div className="columns">
@@ -14,8 +17,14 @@ const BodySection: React.FC<BodySectionType> = ({ onAddPost }) => {
           <AddPost onAddPost={onAddPost} />
         </div>
         <div className="column">
-          <FollowerOrFollowing type="follower" />
-          <FollowerOrFollowing type="following" />
+          <FollowerOrFollowing
+            type="follower"
+            total={followersCount.followers}
+          />
+          <FollowerOrFollowing
+            type="following"
+            total={followersCount.followings}
+          />
         </div>
       </div>
     </div>

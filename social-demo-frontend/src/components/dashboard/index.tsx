@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import useFetch from "use-http";
 
 import BodySection from "./BodySection";
 import PostList from "../PostList";
@@ -7,30 +6,43 @@ import { PostItemType } from "../PostItem";
 
 const Index: React.FC = () => {
   const [posts, setPosts] = useState<PostItemType[]>([]);
-  const { get, post, response } = useFetch();
+  const [followsCount, setFollowsCount] = useState<
+    { followers: number; followings: number }
+  >({ followers: 0, followings: 0 });
 
   useEffect(() => {
-    // get posts
     const getPosts = async () => {
-      const resPosts = await get("/post");
-      if (response.ok) {
-        setPosts(resPosts);
-      }
+      const res = await fetch("/post", { method: "GET" });
+      const json = await res.json();
+      setPosts(json);
+    };
+    const getFollowsCount = async () => {
+      const res = await fetch("/followCount", { method: "GET" });
+      const json = await res.json();
+      setFollowsCount(json);
     };
     getPosts();
-    // eslint-disable-next-line
+    getFollowsCount();
   }, []);
 
   const onAddPost = async (data: Record<string, any>) => {
-    const newPost: PostItemType = await post("/post", data);
-    if (response.ok) {
+    const res = await fetch(
+      "/post",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(data),
+      },
+    );
+    if (res.ok) {
+      const newPost: PostItemType = await res.json();
       setPosts([{ ...newPost }, ...posts]);
     }
   };
 
   return (
     <div className="container">
-      <BodySection onAddPost={onAddPost} />
+      <BodySection onAddPost={onAddPost} followersCount={followsCount} />
       <PostList posts={posts} />
     </div>
   );
